@@ -18,7 +18,12 @@ public enum Operator {
   /** Pops 2 values from stack, pushes quotient (real) of the 2 back onto stack. */
   DIVIDE("/"),
   /** Pops 1 value from stack, pushes its square root back onto stack. */
-  SQUARE_ROOT("sqrt"),
+  SQUARE_ROOT("sqrt") {
+    @Override
+    protected boolean needsEscape() {
+      return false;
+    }
+  },
   /** Pops 2 values from stack, pushes the value of 1st raised to the second back onto stack. */
   POWER("^"),
   /** Pops 2 values from stack, pushes remainder after truncated division of the 2 back onto stack. */
@@ -35,8 +40,21 @@ public enum Operator {
     return token;
   }
 
+  protected boolean needsEscape() {
+    return true;
+  }
+
   public static String tokenPattern() {
-    return "(?<=^|\\s)(\\+|\\-|\\*|\\/|\\^|\\%|sqrt)(?=\\s|$)";
+    String pattern = "";
+    for (Operator op : values()) {
+      if (op.needsEscape()) {
+        pattern += "\\";
+      }
+      pattern += op.token + "|";
+    }
+    return String.format(
+        "(?<=^|\\s)%s(?=\\s|$)",
+        pattern.substring(0, pattern.length() - 1));
   }
 
   public static void operate(String token, Deque<Double> operands) {
