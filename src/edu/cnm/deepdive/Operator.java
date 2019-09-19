@@ -2,7 +2,6 @@ package edu.cnm.deepdive;
 
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
