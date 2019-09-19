@@ -16,8 +16,15 @@ public class Calculator {
   public void process(InputStream in) {
     Deque<Double> operands = new LinkedList<>();
     try (Scanner scanner = new Scanner(in)) {
-      while (scanner.hasNextDouble()) {
-        operands.push(scanner.nextDouble());
+      String pattern = Operator.tokenPattern();
+      while (scanner.hasNext()) {
+        if (scanner.hasNextDouble()) {
+          operands.push(scanner.nextDouble());
+        } else if (scanner.hasNext(pattern)) {
+          Operator.operate(scanner.next(pattern), operands);
+        } else {
+          throw new IllegalArgumentException(scanner.next());
+        }
       }
     } catch (NoSuchElementException ignored) {
       // End of input; complete processing.
